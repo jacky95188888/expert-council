@@ -107,23 +107,23 @@
      視圖二:主頁(四大類入口)
      ========================================================= */
   #home{padding:8px 0 40px}
-  .home-hero{text-align:center;padding:18px 22px 6px}
-  .home-hero h2{font-size:25px;font-weight:900;line-height:1.3;text-shadow:0 0 20px rgba(90,150,255,.45)}
+  .home-hero{text-align:center;padding:14px 22px 4px}
+  .home-hero h2{font-size:23px;font-weight:900;line-height:1.3;text-shadow:0 0 20px rgba(90,150,255,.45)}
   .home-hero h2 .hl{color:var(--blue);text-shadow:0 0 20px rgba(77,163,255,.85)}
-  .home-hero p{color:var(--ink-soft);font-size:13px;margin-top:9px;letter-spacing:.04em}
-  /* 圓桌氛圍圖 */
-  .council{margin:16px 14px 0;border-radius:var(--r);overflow:hidden;position:relative;border:1px solid var(--panel-line);
-    box-shadow:0 0 30px rgba(60,120,230,.2)}
-  .council img{width:100%;display:block;opacity:.92}
-  .council::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(6,13,28,.92))}
-  .council .cap{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:12px;color:var(--ink);font-weight:500;letter-spacing:.06em;z-index:2;text-shadow:0 1px 6px #000}
+  .home-hero p{color:var(--ink-soft);font-size:12.5px;margin-top:7px;letter-spacing:.04em}
+  /* 圓桌氛圍圖(精緻橫幅) */
+  .council{margin:12px 14px 0;border-radius:var(--r);overflow:hidden;position:relative;border:1px solid var(--panel-line);
+    box-shadow:0 0 26px rgba(60,120,230,.18);height:120px}
+  .council img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;opacity:.9}
+  .council::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,13,28,.15) 40%,rgba(6,13,28,.95))}
+  .council .cap{position:absolute;left:0;right:0;bottom:11px;text-align:center;font-size:12px;color:var(--ink);font-weight:600;letter-spacing:.05em;z-index:2;text-shadow:0 1px 6px #000}
   /* 數據卡 */
-  .stats-card{margin:14px;padding:16px 10px;display:flex;justify-content:space-around}
+  .stats-card{margin:12px 14px;padding:14px 10px;display:flex;justify-content:space-around}
   .stats-card div{text-align:center}
   .stats-card b{font-size:26px;font-weight:900;color:var(--blue);display:block;line-height:1;text-shadow:0 0 14px rgba(77,163,255,.7)}
   .stats-card span{font-size:11px;color:var(--ink-soft);margin-top:5px;display:block}
   /* 四大類標題 */
-  .sec-title{display:flex;align-items:center;gap:9px;padding:14px 22px 10px}
+  .sec-title{display:flex;align-items:center;gap:9px;padding:10px 22px 10px}
   .sec-title .dot{width:8px;height:8px;border-radius:2px;background:var(--blue);box-shadow:0 0 8px var(--blue)}
   .sec-title h3{font-size:15px;font-weight:700;letter-spacing:.04em}
   /* 四大類卡片 */
@@ -511,8 +511,7 @@ app.innerHTML=`
     <div class="brand"><div id="hdrlogo"></div><div><h1 id="htitle">專家決策團</h1><div class="en" id="hsub">EXPERT COUNCIL</div></div></div>
   </div>
 </header>
-<section class="view active" id="intro"></section>
-<section class="view" id="home"></section>
+<section class="view active" id="home"></section>
 <section class="view" id="catTeams"></section>
 <section class="view" id="team"></section>
 <div class="modal" id="modal">
@@ -579,7 +578,7 @@ function renderHome(){
   ];
   $('#home').innerHTML=`
   <div class="home-hero">
-    <h2>先問問<span class="hl">專家團</span>。</h2>
+    <h2>先問問<span class="hl">專家團</span></h2>
     <p>25位專家 · 多角度分析 · 更好的答案</p>
   </div>
   <div class="council">
@@ -744,9 +743,9 @@ $('#keyCancel').onclick=()=>$('#modal').classList.remove('show');
 $('#keySave').onclick=()=>{const v=$('#keyInput').value.trim();if(v)localStorage.setItem(KEY,v);$('#modal').classList.remove('show');};
 $('#modal').onclick=e=>{if(e.target===$('#modal'))$('#modal').classList.remove('show')};
 
-// 開機
-renderIntro();
+// 開機:直接進主頁(封面介紹頁已移除)
 renderHome();
+goHome();
 
 </script>
 </body>
