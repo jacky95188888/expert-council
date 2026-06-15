@@ -707,6 +707,19 @@ async function askChief(question,answers){
   try{
     const txt=await callAPI(sys,`使用者的問題:${question}\n\n五位顧問的回答:\n${panel}\n\n請做出團長彙整。`,700);
     chief.querySelector('.cthink').outerHTML='<div class="cbody">'+txt.replace(/\n/g,'<br>')+'</div>';
+      try{
+      const recs=JSON.parse(localStorage.getItem('ecDecisions')||'[]');
+      recs.unshift({
+        time:new Date().toLocaleString('zh-TW'),
+        cat:CUR.cat.name,
+        team:CUR.t.name,
+        question:question,
+        answers:answers.map(a=>({name:a.name,role:a.role,text:a.text})),
+        chief:txt
+      });
+      localStorage.setItem('ecDecisions',JSON.stringify(recs.slice(0,50)));
+    }catch(e){}
+
   }catch(err){ chief.querySelector('.cthink').outerHTML='<div class="cbody">⚠️ '+err.message+'</div>'; }
 }
 function bindAsk(){
