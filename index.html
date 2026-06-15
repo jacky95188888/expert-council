@@ -652,128 +652,35 @@ function personaPrompt(cat,team,e){
 async function callAPI(system,user,maxTok){
   let res, raw;
   try{
-        // 1. 取得裝置 ID (確保第 500 行已有 getDeviceId 函數)
-        const deviceId = getDeviceId();
-
-        // 2. 發送請求給 Cloudflare Worker
-        const res = await fetch('https://expert-council.rhtm9y855y.workers.dev/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-                // 注意：不需要再帶 x-api-key
-            },
-            body: JSON.stringify({
-                deviceId: deviceId,
-                system: system,
-                messages: [{ role: "user", content: user }]
-            })
-        });
-
-        // 3. 取得並解析 Worker 回傳的內容
-        const rawText = await res.text();
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            throw new Error('回應格式錯誤: ' + rawText.slice(0, 100));
-        }
-
-        // 4. 檢查業務邏輯錯誤 (限次、試用結束)
-        if (data.error) {
-            const errMsg = data.message || data.error;
-            if (data.error === 'DAILY_LIMIT' || data.error === 'TRIAL_ENDED') {
-                throw new Error('LIMIT_REACHED:' + errMsg);
-            }
-            throw new Error(errMsg);
-        }
-
-        // 5. 成功取得 AI 回應 (Anthropic 格式)
-        if (data.content && data.content[0]) {
-            return data.content[0].text;
-        } else {
-            throw new Error('AI 未回傳有效內容');
-        }
-
-        // 3. 檢查 Worker 定義的業務錯誤 (限次、試用結束)
-        if (data.error) {
-            const errMsg = data.message || data.error;
-            
-            // 針對免費次數用完的情況，拋出特定錯誤讓前端 UI 顯示提示
-            if (data.error === 'DAILY_LIMIT' || data.error === 'TRIAL_ENDED') {
-                throw new Error('LIMIT_REACHED:' + errMsg); 
-            }
-        // 4. 檢查 Worker 定義的業務錯誤 (必須先檢查錯誤！)
-        if (data.error) {
-            const errMsg = data.message || data.error;
-
-            // 針對免費次數用完的情況，拋出特定錯誤讓前端 UI 顯示提示
-            if (data.error === 'DAILY_LIMIT' || data.error === 'TRIAL_ENDED') {
-                throw new Error('LIMIT_REACHED:' + errMsg);
-            }
-
-            // 其他伺服器錯誤
-            throw new Error(errMsg);
-        }
-
-        // 5. 成功取得 AI 回應 (提取文字內容)
-        let replyContent = '';
-        if (data.content && Array.isArray(data.content)) {
-            const textBlock = data.content.find(block => block.type === 'text');
-            replyContent = textBlock ? textBlock.text : JSON.stringify(data.content);
-        } else if (typeof data.content === 'string') {
-            replyContent = data.content;
-        } else {
-            throw new Error('無法識別的回覆格式');
-        }
-
-        // 6. 取得使用量資訊 (由 Worker 計算好回傳)
-        const usage = data.usage || { input_tokens: 0, output_tokens: 0 };
-
-        return {
-            content: replyContent,
-            usage: usage
-        };
-
-    } catch (e) {
-        // 統一錯誤攔截：將所有錯誤拋回給前端 UI 顯示
-        throw e;
-    }
-async function        // 4. 檢查 Worker 定義的業務錯誤 (必須先檢查錯誤！)
-        if (data.error) {
-            const errMsg = data.message || data.error;
-
-            // 針對免費次數用完的情況，拋出特定錯誤讓前端 UI 顯示提示
-            if (data.error === 'DAILY_LIMIT' || data.error === 'TRIAL_ENDED') {
-                throw new Error('LIMIT_REACHED:' + errMsg);
-            }
-
-            // 其他伺服器錯誤
-            throw new Error(errMsg);
-        }
-
-        // 5. 成功取得 AI 回應 (提取文字內容)
-        let replyContent = '';
-        if (data.content && Array.isArray(data.content)) {
-            const textBlock = data.content.find(block => block.type === 'text');
-            replyContent = textBlock ? textBlock.text : JSON.stringify(data.content);
-        } else if (typeof data.content === 'string') {
-            replyContent = data.content;
-        } else {
-            throw new Error('無法識別的回覆格式');
-        }
-
-        // 6. 取得使用量資訊 (由 Worker 計算好回傳)
-        const usage = data.usage || { input_tokens: 0, output_tokens: 0 };
-
-        return {
-            content: replyContent,
-            usage: usage
-        };
-
-    } catch (e) {
-        // 統一錯誤攔截：將所有錯誤拋回給前端 UI 顯示
-        throw e;
-    } askOne(e,i,question){
+    res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:FX_MODEL,max_tokens:maxTok,system,messages:[{role:'user',content:user}]})
+    });
+  }catch(netErr){
+    throw new Error('請求送不出去('+(netErr&&netErr.name||'')+':'+(netErr&&netErr.message||'未知')+')。若用 App 內建瀏覽器,請改用 Safari 或 Chrome 開啟');
+  }
+  raw=await res.text();
+  let data;
+  try{ data=JSON.parse(raw); }
+  catch(e){ throw new Error('回應無法解析:'+raw.slice(0,120)); }
+  // API 回傳錯誤物件
+  if(data.error){
+    const m=data.error.message||'';
+    if(res.status===401||/authentication|api key|x-api-key/i.test(m)) throw new Error('金鑰無效或未授權,請重新設定金鑰');
+    if(res.status===429||/rate|overloaded/i.test(m)) throw new Error('請求過於頻繁或伺服器忙碌,稍候再試');
+    if(res.status===400&&/credit|balance/i.test(m)) throw new Error('API 額度不足,請至 console 檢查');
+    throw new Error('API 錯誤:'+(m||res.status));
+  }
+  if(!res.ok) throw new Error('連線失敗('+res.status+')');
+  // 正常解析
+  if(Array.isArray(data.content)){
+    const txt=data.content.filter(b=>b&&b.type==='text').map(b=>b.text).join('\n').trim();
+    if(txt) return txt;
+  }
+  throw new Error('回應格式異常:'+JSON.stringify(data).slice(0,120));
+}
+async function askOne(e,i,question){
   const tk=$('#team .take[data-take="'+i+'"]');
   tk.className='take';
   tk.innerHTML='<div class="think"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 思考中</div>';
