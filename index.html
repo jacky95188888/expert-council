@@ -766,6 +766,34 @@ $('#modal').onclick=e=>{if(e.target===$('#modal'))$('#modal').classList.remove('
 // 開機:直接進主頁(封面介紹頁已移除)
 renderHome();
 goHome();
+// ===== 我的決策紀錄 =====
+(function(){
+  const btn=document.createElement('button');
+  btn.textContent='📋 紀錄';
+  btn.style.cssText='position:fixed;right:16px;bottom:16px;z-index:9999;background:#5b8def;color:#fff;border:none;border-radius:24px;padding:10px 16px;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.3)';
+  btn.onclick=showDecisions;
+  document.body.appendChild(btn);
+})();
+function showDecisions(){
+  const recs=JSON.parse(localStorage.getItem('ecDecisions')||'[]');
+  let html='<div style="position:fixed;inset:0;z-index:10000;background:#0d1117;overflow-y:auto;padding:20px">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="color:#fff;margin:0">我的決策紀錄</h2><button onclick="this.closest(\'div\').parentElement.remove()" style="background:#333;color:#fff;border:none;border-radius:20px;padding:8px 16px">關閉</button></div>';
+  if(recs.length===0){
+    html+='<p style="color:#888">還沒有任何紀錄。問完一次「問問全團」後就會自動記錄在這裡。</p>';
+  }else{
+    recs.forEach(r=>{
+      html+='<div style="background:#161b22;border-radius:12px;padding:16px;margin-bottom:12px">';
+      html+='<div style="color:#5b8def;font-size:13px">'+r.time+' · '+r.cat+' · '+r.team+'</div>';
+      html+='<div style="color:#fff;font-weight:600;margin:8px 0">'+r.question+'</div>';
+      html+='<div style="color:#aaa;font-size:14px;line-height:1.6">'+(r.chief||'').replace(/\n/g,'<br>')+'</div>';
+      html+='</div>';
+    });
+  }
+  html+='</div>';
+  const box=document.createElement('div');
+  box.innerHTML=html;
+  document.body.appendChild(box);
+}
 
 </script>
 </body>
