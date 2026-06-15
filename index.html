@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+／<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -498,6 +498,12 @@ const app=$('#app');
 const FX_MODEL='claude-sonnet-4-6';
 const KEY='dlApiKey';
 function getKey(){return localStorage.getItem(KEY)||''}
+function getDeviceId(){
+  let id=localStorage.getItem('ecDeviceId');
+  if(!id){id='dev_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);localStorage.setItem('ecDeviceId',id);}
+  return id;
+}
+
 
 // 把領域色帶進每個 category
 const COLORS={life:'#4DA3FF',money:'#3DD6A0',travel:'#FFB24D',food:'#FF6B6B'};
@@ -652,11 +658,12 @@ function personaPrompt(cat,team,e){
 async function callAPI(system,user,maxTok){
   let res, raw;
   try{
-    res=await fetch('https://api.anthropic.com/v1/messages',{
+        res=await fetch('https://expert-council.rhtm9y855y.workers.dev',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:FX_MODEL,max_tokens:maxTok,system,messages:[{role:'user',content:user}]})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({deviceId:getDeviceId(),system,messages:[{role:'user',content:user}]})
     });
+
   }catch(netErr){
     throw new Error('請求送不出去('+(netErr&&netErr.name||'')+':'+(netErr&&netErr.message||'未知')+')。若用 App 內建瀏覽器,請改用 Safari 或 Chrome 開啟');
   }
