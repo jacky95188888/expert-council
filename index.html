@@ -738,18 +738,42 @@ async function callAPI(system,user,maxTok){
         // 統一錯誤攔截：將所有錯誤拋回給前端 UI 顯示
         throw e;
     }
-    if(res.status===400&&/credit|balance/i.test(m)) throw new Error('API 額度不足,請至 console 檢查');
-    throw new Error('API 錯誤:'+(m||res.status));
-  }
-  if(!res.ok) throw new Error('連線失敗('+res.status+')');
-  // 正常解析
-  if(Array.isArray(data.content)){
-    const txt=data.content.filter(b=>b&&b.type==='text').map(b=>b.text).join('\n').trim();
-    if(txt) return txt;
-  }
-  throw new Error('回應格式異常:'+JSON.stringify(data).slice(0,120));
-}
-async function askOne(e,i,question){
+async function        // 4. 檢查 Worker 定義的業務錯誤 (必須先檢查錯誤！)
+        if (data.error) {
+            const errMsg = data.message || data.error;
+
+            // 針對免費次數用完的情況，拋出特定錯誤讓前端 UI 顯示提示
+            if (data.error === 'DAILY_LIMIT' || data.error === 'TRIAL_ENDED') {
+                throw new Error('LIMIT_REACHED:' + errMsg);
+            }
+
+            // 其他伺服器錯誤
+            throw new Error(errMsg);
+        }
+
+        // 5. 成功取得 AI 回應 (提取文字內容)
+        let replyContent = '';
+        if (data.content && Array.isArray(data.content)) {
+            const textBlock = data.content.find(block => block.type === 'text');
+            replyContent = textBlock ? textBlock.text : JSON.stringify(data.content);
+        } else if (typeof data.content === 'string') {
+            replyContent = data.content;
+        } else {
+            throw new Error('無法識別的回覆格式');
+        }
+
+        // 6. 取得使用量資訊 (由 Worker 計算好回傳)
+        const usage = data.usage || { input_tokens: 0, output_tokens: 0 };
+
+        return {
+            content: replyContent,
+            usage: usage
+        };
+
+    } catch (e) {
+        // 統一錯誤攔截：將所有錯誤拋回給前端 UI 顯示
+        throw e;
+    } askOne(e,i,question){
   const tk=$('#team .take[data-take="'+i+'"]');
   tk.className='take';
   tk.innerHTML='<div class="think"><span class="dot"></span><span class="dot"></span><span class="dot"></span> 思考中</div>';
