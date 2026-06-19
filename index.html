@@ -672,13 +672,16 @@ async function callAPI(system,user,maxTok){
   try{ data=JSON.parse(raw); }
   catch(e){ throw new Error('回應無法解析:'+raw.slice(0,120)); }
   // API 回傳錯誤物件
-  if(data.error){
+   if(data.error){
     const m=data.error.message||'';
+    if(data.error==='DAILY_LIMIT'||/DAILY_LIMIT/i.test(m)) throw new Error('今日免費次數已用完，明天再來，或升級解鎖更多次數 🙏');
+    if(data.error==='TRIAL_ENDED'||/TRIAL_ENDED/i.test(m)) throw new Error('7天免費試用已結束，升級即可繼續使用 🙏');
     if(res.status===401||/authentication|api key|x-api-key/i.test(m)) throw new Error('金鑰無效或未授權,請重新設定金鑰');
     if(res.status===429||/rate|overloaded/i.test(m)) throw new Error('請求過於頻繁或伺服器忙碌,稍候再試');
     if(res.status===400&&/credit|balance/i.test(m)) throw new Error('API 額度不足,請至 console 檢查');
-    throw new Error('API 錯誤:'+(m||res.status));
+    throw new Error('系統忙碌，請稍後再試');
   }
+
   if(!res.ok) throw new Error('連線失敗('+res.status+')');
   // 正常解析
   if(Array.isArray(data.content)){
