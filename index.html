@@ -661,7 +661,7 @@ async function callAPI(system,user,maxTok){
         res=await fetch('https://expert-council.rhtm9y855y.workers.dev',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({deviceId:getDeviceId(),system,messages:[{role:'user',content:user}]})
+           body:JSON.stringify({deviceId:getDeviceId(),consultId:(window.CUR_CONSULT||''),system,messages:[{role:'user',content:user}]})
     });
 
   }catch(netErr){
@@ -731,7 +731,8 @@ function bindAsk(){
     if(!getKey()){$('#setKey').click();return;}
     busy=true;const btn=$('#send');btn.disabled=true;btn.textContent='開會中…';
     $('#chief').className='chief';$('#hint').textContent='五位顧問正在針對你的問題給建議…';
-    const ok=[];
+            const ok=[]; window.CUR_CONSULT = Date.now()+'_'+Math.random().toString(36).slice(2);
+
     for(let i=0;i<CUR.t.experts.length;i++){
       const r=await askOne(CUR.t.experts[i],i,q);
       if(r) ok.push(r);
