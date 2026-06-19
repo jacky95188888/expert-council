@@ -728,7 +728,7 @@ function bindAsk(){
     if(busy) return;
     const q=$('#q').value.trim();
     if(!q){$('#q').focus();return;}
-    i
+    
     busy=true;const btn=$('#send');btn.disabled=true;btn.textContent='開會中…';
     $('#chief').className='chief';$('#hint').textContent='五位顧問正在針對你的問題給建議…';
             const ok=[]; window.CUR_CONSULT = Date.now()+'_'+Math.random().toString(36).slice(2);
