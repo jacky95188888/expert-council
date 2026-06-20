@@ -611,7 +611,9 @@ const ICONS = {
   f6: svg('<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>'+g('<path d="M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18Z"/>')),
   f7: svg('<path d="M5 4h14l-6.5 8v6"/><path d="M9 18h6"/>'+g('<path d="m5 4 7 8"/>')),
 };
-const CAT_ICONS = { life: ICONS.l2, money: ICONS.m1, travel: ICONS.t2, food: ICONS.f3 };
+const CAT_ICONS = { life: ICONS.l2, money: ICONS.m1, travel: ICONS.t2, food: ICONS.f3, marketing: ICONS.m1, decision: ICONS.m6, relation: ICONS.l2 };
+['mk1','mk2','mk3','mk4','mk5','mk6','dc1','dc2','dc3','dc4','dc5','rl1','rl2','rl3','rl4'].forEach(id=>{ if(!ICONS[id]) ICONS[id]=ICONS.l1; });
+
 
 </script>
 <script>
@@ -630,8 +632,9 @@ function getDeviceId(){
 
 
 // 把領域色帶進每個 category
-const COLORS={life:'#4DA3FF',money:'#3DD6A0',travel:'#FFB24D',food:'#FF6B6B'};
-const CAT_DESC={life:'把日子過得更有餘裕',money:'讓錢替你工作',travel:'玩得盡興也安心',food:'吃得專業又開心'};
+const COLORS={life:'#4DA3FF',money:'#3DD6A0',travel:'#FFB24D',food:'#FF6B6B',marketing:'#F97316',decision:'#8B5CF6',relation:'#EC4899'};
+const CAT_DESC=Object.fromEntries(CATEGORIES.map(c=>[c.id,c.desc]));
+
 
 // ---------- 視圖容器 ----------
 app.innerHTML=`
