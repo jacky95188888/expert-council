@@ -937,7 +937,8 @@ function showDecisions(){
 document.addEventListener('DOMContentLoaded',function(){
   var bar=document.createElement('div');
   bar.id='dad-cta-bar';
-  bar.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:9998;background:linear-gradient(135deg,#06C755 0%,#05a648 100%);box-shadow:0 -4px 20px rgba(0,0,0,.35);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:-apple-system,PingFang TC,sans-serif;';
+  bar.style.cssText='position:fixed;left:0;right:130px;bottom:0;z-index:99999;background:linear-gradient(135deg,#06C755 0%,#05a648 100%);box-shadow:0 -4px 20px rgba(0,0,0,.35);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:-apple-system,PingFang TC,sans-serif;';
+
   bar.innerHTML='<div style="color:#fff;line-height:1.3;min-width:0;"><div style="font-size:14px;font-weight:700;">有問題？加LINE問三寶爸</div><div style="font-size:11px;opacity:.9;">想吃脆皮烤豬？也點我 👇</div></div><a href="https://lin.ee/YewRM1L" target="_blank" rel="noopener" style="flex-shrink:0;background:#fff;color:#06C755;font-size:14px;font-weight:800;text-decoration:none;padding:9px 18px;border-radius:22px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);">加 LINE</a>';
   document.body.appendChild(bar);
   var pad=document.createElement('div');
