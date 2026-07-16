@@ -930,6 +930,28 @@ function showDecisions(){
   document.body.appendChild(box);
 }
 (function(){var s=document.createElement('style');s.textContent='#setKey{display:none!important}';document.head.appendChild(s);})();
+<!-- 三寶爸導流底部橫幅 -->
+<div id="dad-cta-bar" style="
+  position:fixed; left:0; right:0; bottom:0; z-index:9999;
+  background:linear-gradient(135deg,#06C755 0%,#05a648 100%);
+  box-shadow:0 -4px 20px rgba(0,0,0,.35);
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  font-family:-apple-system,'PingFang TC',sans-serif;
+">
+  <div style="color:#fff; line-height:1.3;">
+    <div style="font-size:15px; font-weight:700;">有問題？加LINE問三寶爸</div>
+    <div style="font-size:12px; opacity:.9;">想吃脆皮烤豬？也點我 👇</div>
+  </div>
+  <a href="https://lin.ee/YewRM1L" target="_blank" rel="noopener" style="
+    flex-shrink:0; background:#fff; color:#06C755;
+    font-size:15px; font-weight:800; text-decoration:none;
+    padding:10px 20px; border-radius:24px; white-space:nowrap;
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+  ">加 LINE</a>
+</div>
+<!-- 避免橫幅擋住最底內容，墊高頁面底部空間 -->
+<div style="height:80px;"></div>
 
 
 </script>
